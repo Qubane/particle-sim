@@ -48,3 +48,14 @@ class Board:
         :param value: particle value (id)
         :param size: brush size
         """
+
+        square_size = size ** 2
+        for y in range(np.ceil(size)):
+            for x in range(np.ceil(size)):
+                distance = (x - x_pos) ** 2 + (y - y_pos) ** 2
+
+                brush_x = x_pos + x
+                brush_y = y_pos + y
+
+                if 0 < brush_x < self.width and 0 < brush_y < self.height and distance <= square_size:
+                    self.board[brush_y * self.width + brush_x] = value
