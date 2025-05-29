@@ -15,7 +15,7 @@ class Board:
         self.width: int = width
         self.height: int = height
 
-        self.board: np.ndarray = np.zeros((self.width, self.height), dtype=np.uint8)
+        self.board: np.ndarray = np.zeros(self.height * self.width, dtype=np.uint8)
 
     def plot(self, x_pos: int, y_pos: int, value: int):
         """
@@ -25,6 +25,9 @@ class Board:
         :param value: particle value (id)
         """
 
+        if 0 < x_pos < self.width and 0 < y_pos < self.height:
+            self.board[y_pos * self.width + x_pos] = value
+
     def get(self, x_pos: int, y_pos: int) -> int:
         """
         Gets a particle from a given coordinate
@@ -32,6 +35,10 @@ class Board:
         :param y_pos: y position
         :return: particle value (id)
         """
+
+        if 0 < x_pos < self.width and 0 < y_pos < self.height:
+            return self.board[y_pos * self.width + x_pos]
+        return -1
 
     def brush(self, x_pos: int, y_pos: int, value: int, size: float = 1.0):
         """
