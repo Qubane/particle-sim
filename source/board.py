@@ -15,7 +15,7 @@ class Board:
         self.width: int = width
         self.height: int = height
 
-        self.board: np.ndarray = np.zeros(self.height * self.width, dtype=np.uint8)
+        self.board: np.ndarray = np.zeros(self.width * self.height, dtype=np.uint8)
 
     def plot(self, x_pos: int, y_pos: int, value: int):
         """
@@ -54,11 +54,11 @@ class Board:
             for x in range(np.ceil(size)):
                 distance = (x - x_pos) ** 2 + (y - y_pos) ** 2
 
-                brush_x = x_pos + x
-                brush_y = y_pos + y
+                brush_x = x_pos + x - size // 2
+                brush_y = y_pos + y - size // 2
 
                 if 0 < brush_x < self.width and 0 < brush_y < self.height and distance <= square_size:
-                    self.board[brush_y * self.width + brush_x] = value
+                    self.plot(brush_x, brush_y, value)
 
     def simulation_step(self):
         """
