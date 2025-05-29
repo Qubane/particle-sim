@@ -4,6 +4,7 @@ Application class
 
 
 import os
+import math
 import time
 import random
 import moderngl as gl
@@ -48,11 +49,20 @@ class App:
 
         os.system("cls" if os.name == "nt" else "clear")
 
-        self.board.brush(self.width // 2, self.height // 2, 1, 12.0)
+        # self.board.brush(self.width // 2, self.height // 2, 1, 6.0)
 
         while True:
+            # lil sinusoidal movement for brush
+            x = (math.sin(time.perf_counter() / 2) + 1) / 2 * self.width
+            self.board.brush(int(x), self.height // 2, 1, 3.0)
+
+            # printout the board
             self._print_board()
+
+            # make a simulation step
             self.board.simulation_step()
+
+            # sleep to make 25'ish frames per second
             time.sleep(1 / 25)
 
     def _print_board(self):
@@ -68,7 +78,7 @@ class App:
                 out += "\n"
             if self.board.board[particles - i - 1] > 0:
                 count += 1
-                out += "#"
+                out += "█"
             else:
                 out += " "
         print(out, end="\n")
