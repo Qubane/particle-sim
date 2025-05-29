@@ -3,6 +3,7 @@ Particle board class
 """
 
 
+import math
 import numpy as np
 
 
@@ -50,12 +51,12 @@ class Board:
         """
 
         square_size = size ** 2
-        for y in range(np.ceil(size)):
-            for x in range(np.ceil(size)):
-                distance = (x - x_pos) ** 2 + (y - y_pos) ** 2
+        for y in range(math.ceil(size)):
+            for x in range(math.ceil(size)):
+                distance = x ** 2 + y ** 2
 
-                brush_x = x_pos + x - size // 2
-                brush_y = y_pos + y - size // 2
+                brush_x = x_pos + x - int(size / 2)
+                brush_y = y_pos + y - int(size / 2)
 
                 if 0 < brush_x < self.width and 0 < brush_y < self.height and distance <= square_size:
                     self.plot(brush_x, brush_y, value)
