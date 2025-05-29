@@ -48,12 +48,12 @@ class App:
 
         os.system("cls" if os.name == "nt" else "clear")
 
-        self.board.brush(self.width // 2, self.height // 2, 1, 5.0)
+        self.board.brush(self.width // 2, self.height // 2, 1, 12.0)
 
         while True:
             self._print_board()
             self.board.simulation_step()
-            time.sleep(1)
+            time.sleep(1 / 25)
 
     def _print_board(self):
         """
