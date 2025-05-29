@@ -59,3 +59,10 @@ class Board:
 
                 if 0 < brush_x < self.width and 0 < brush_y < self.height and distance <= square_size:
                     self.board[brush_y * self.width + brush_x] = value
+
+    def simulation_step(self):
+        """
+        Makes a step in simulation
+        """
+
+        raise NotImplementedError
