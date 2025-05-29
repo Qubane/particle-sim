@@ -89,14 +89,3 @@ class SingleCPUSimulation(Board):
 
         # copy the new board
         self.board = new
-
-
-class MultipleCPUSimulation(Board):
-    """
-    Multicore CPU processed particle simulation
-    """
-
-    def simulation_step(self):
-        """
-        Makes a step in simulation
-        """
