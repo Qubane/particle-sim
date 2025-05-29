@@ -50,15 +50,14 @@ class Board:
         :param size: brush size
         """
 
-        square_size = size ** 2
-        for y in range(math.ceil(size)):
-            for x in range(math.ceil(size)):
-                distance = x ** 2 + y ** 2
+        for y in range(-math.ceil(size / 2), math.ceil(size / 2)):
+            for x in range(-math.ceil(size / 2), math.ceil(size / 2)):
+                distance = math.sqrt(x ** 2 + y ** 2) * 2
 
-                brush_x = x_pos + x - int(size / 2)
-                brush_y = y_pos + y - int(size / 2)
+                brush_x = x_pos + x
+                brush_y = y_pos + y
 
-                if 0 < brush_x < self.width and 0 < brush_y < self.height and distance <= square_size:
+                if 0 < brush_x < self.width and 0 < brush_y < self.height and distance <= size:
                     self.plot(brush_x, brush_y, value)
 
     def simulation_step(self):
