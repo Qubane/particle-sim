@@ -16,3 +16,14 @@ class SingleCPUSimulation(Board):
         """
         Makes a step in simulation
         """
+
+
+class MultipleCPUSimulation(Board):
+    """
+    Multicore CPU processed particle simulation
+    """
+
+    def simulation_step(self):
+        """
+        Makes a step in simulation
+        """
