@@ -7,6 +7,15 @@ import math
 import numpy as np
 
 
+class ParticleColor:
+    """
+    Colors for particles
+    """
+
+    SAND = (255, 255, 0)
+    WATER = (0, 32, 255)
+
+
 class Board:
     """
     2D grid of particles
