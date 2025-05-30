@@ -22,7 +22,7 @@ class App:
         # mode of execution
         # 0 - Single core CPU
         # 1 - Compute GPU
-        self.mode: int = 1
+        self.mode: int = 0
 
         # width and height
         self.width: int = 120
