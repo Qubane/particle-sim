@@ -31,20 +31,20 @@ class App:
         # application loop
         self.running = False
 
-        # mode of execution
+        # board_mode of execution
         # 0 - Single core CPU
         # 1 - Compute GPU
-        self.mode: int = 0
+        self.board_mode: int = 0
 
-        # width and height
-        self.width: int = 120
-        self.height: int = 30
+        # grid_width and grid_height
+        self.grid_width: int = 120
+        self.grid_height: int = 30
 
         # pick board
-        if self.mode == 0:
-            self.board: SingleCPUSimulation = SingleCPUSimulation(self.width, self.height)
+        if self.board_mode == 0:
+            self.board: SingleCPUSimulation = SingleCPUSimulation(self.grid_width, self.grid_height)
 
-        elif self.mode == 1:
+        elif self.board_mode == 1:
             ...
 
         else:
@@ -92,8 +92,8 @@ class App:
         """
 
         # sinusoidal movement for brush
-        x = (math.sin(time.perf_counter() / 2) + 1) / 2 * self.width
-        self.board.brush(x, self.height * 0.8, 1, 3.5)
+        x = (math.sin(time.perf_counter() / 2) + 1) / 2 * self.grid_width
+        self.board.brush(x, self.grid_height * 0.8, 1, 3.5)
 
         # make a simulation step
         self.board.simulation_step()
