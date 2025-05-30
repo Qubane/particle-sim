@@ -6,9 +6,7 @@ Application class
 import os
 import math
 import time
-import random
-import moderngl as gl
-from source.board import Board
+import pygame
 from source.gpu_process import *
 from source.cpu_process import SingleCPUSimulation
 
@@ -19,6 +17,20 @@ class App:
     """
 
     def __init__(self):
+        # pygame things
+        pygame.init()
+
+        # pygame window
+        self.window_width: int = 800
+        self.window_height: int = 600
+        self.window = pygame.display.set_mode((self.window_width, self.window_height))
+
+        # pygame window caption
+        pygame.display.set_caption("Particles")
+
+        # application loop
+        self.running = False
+
         # mode of execution
         # 0 - Single core CPU
         # 1 - Compute GPU
@@ -43,39 +55,45 @@ class App:
         Runs the application
         """
 
-        os.system("cls" if os.name == "nt" else "clear")
+        # set running to True
+        self.running = True
 
-        # self.board.brush(self.width // 2, self.height // 2, 1, 6.0)
+        # application loop
+        while self.running:
+            # render image
+            self.process_render()
 
-        while True:
-            # lil sinusoidal movement for brush
-            x = (math.sin(time.perf_counter() / 2) + 1) / 2 * self.width
-            self.board.brush(int(x), self.height // 2, 1, 3.0)
+            # process events
+            self.process_events()
 
-            # printout the board
-            self._print_board()
+            # process logic
+            self.process_logic()
 
-            # make a simulation step
-            self.board.simulation_step()
-
-            # sleep to make 25'ish frames per second
-            time.sleep(1 / 25)
-
-    def _print_board(self):
+    def process_events(self):
         """
-        Temporary. Prints the board to terminal
+        Processes window events
         """
 
-        out = "\x1b[H"
-        particles = self.width * self.height
-        count = 0
-        for i in range(particles - self.width):
-            if i > 0 and i % self.width == 0:
-                out += "\n"
-            if self.board.board[particles - i - 1] > 0:
-                count += 1
-                out += "█"
-            else:
-                out += " "
-        print(out, end="\n")
-        print(f"p: {count}", end="", flush=True)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+
+    def process_render(self):
+        """
+        Processes window rendering
+        """
+
+        # update image
+        pygame.display.flip()
+
+    def process_logic(self):
+        """
+        Process "game" logic
+        """
+
+        # sinusoidal movement for brush
+        x = (math.sin(time.perf_counter() / 2) + 1) / 2 * self.width
+        self.board.brush(x, self.height * 0.8, 1, 3.5)
+
+        # make a simulation step
+        self.board.simulation_step()
