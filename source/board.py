@@ -18,7 +18,7 @@ class Board:
 
         self.board: np.ndarray = np.zeros(self.width * self.height, dtype=np.uint8)
 
-    def plot(self, x_pos: int, y_pos: int, value: int):
+    def plot(self, x_pos: int | float, y_pos: int | float, value: int):
         """
         Plots a particle at a given coordinate
         :param x_pos: x position
@@ -26,10 +26,11 @@ class Board:
         :param value: particle value (id)
         """
 
+        x_pos, y_pos = int(x_pos), int(y_pos)
         if 0 < x_pos < self.width and 0 < y_pos < self.height:
             self.board[y_pos * self.width + x_pos] = value
 
-    def get(self, x_pos: int, y_pos: int) -> int:
+    def get(self, x_pos: int | float, y_pos: int | float) -> int:
         """
         Gets a particle from a given coordinate
         :param x_pos: x position
@@ -37,11 +38,12 @@ class Board:
         :return: particle value (id)
         """
 
+        x_pos, y_pos = int(x_pos), int(y_pos)
         if 0 < x_pos < self.width and 0 < y_pos < self.height:
             return self.board[y_pos * self.width + x_pos]
         return -1
 
-    def brush(self, x_pos: int, y_pos: int, value: int, size: float = 1.0):
+    def brush(self, x_pos: int | float, y_pos: int | float, value: int, size: float = 1.0):
         """
         Draws with a circular brush at a given coordinate
         :param x_pos: x position
