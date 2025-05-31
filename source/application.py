@@ -32,14 +32,14 @@ class App:
         self.running: bool = False
         self.framerate: int = 25
 
+        # grid_width and grid_height
+        self.grid_width: int = 160
+        self.grid_height: int = 90
+
         # board_mode of execution
         # 0 - Single core CPU
         # 1 - Compute GPU
         self.board_mode: int = 0
-
-        # grid_width and grid_height
-        self.grid_width: int = 160
-        self.grid_height: int = 90
 
         # pick board
         # CPU
