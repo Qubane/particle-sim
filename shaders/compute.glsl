@@ -11,24 +11,24 @@ layout(std430, binding = 1) buffer ProcessedGrid {
     uint processedGrid[];
 };
 
-uint get_unbound(uint x, uint y) {
+uint get_unbound(int x, int y) {
     return particleGrid[y * u_Width + x];
 }
 
-uint get_bound(uint x, uint y) {
-    if (x > 0 && x < u_Width && y > 0 && y < u_Height)
+uint get_bound(int x, int y) {
+    if (x > -1 && x < u_Width && y > -1 && y < u_Height)
         return particleGrid[y * u_Width + x];
     return 1u;
 }
 
-void put_unbound(uint x, uint y, uint val) {
+void put_unbound(int x, int y, uint val) {
     processedGrid[y * u_Width + x] = val;
 }
 
 layout(local_size_x = 16, local_size_y = 16) in;
 void main() {
     // global id
-    uvec2 pos = gl_GlobalInvocationID.xy;
+    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
 
     // if it exceeds bounds
     if (pos.x >= u_Width || pos.y >= u_Height)
@@ -57,19 +57,21 @@ void main() {
     // if left is empty
     if (left_1 == 0 && left_2 == 0) {
         // put down-left if the space is free
-        if (get_bound(pos.x - 1, pos.y - 1) == 0)
+        if (get_bound(pos.x - 1, pos.y - 1) == 0) {
             put_unbound(pos.x - 1, pos.y - 1, particle);
+            return;
+        }
     }
 
     // if right is empty
     else if (right_1 == 0 && right_2 == 0) {
         // put down-left if the space is free
-        if (get_bound(pos.x + 1, pos.y - 1) == 0)
+        if (get_bound(pos.x + 1, pos.y - 1) == 0) {
             put_unbound(pos.x + 1, pos.y - 1, particle);
+            return;
+        }
     }
 
     // otherwise just leave
-    else {
-        put_unbound(pos.x, pos.y, particle);
-    }
+    put_unbound(pos.x, pos.y, particle);
 }
