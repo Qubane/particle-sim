@@ -6,7 +6,7 @@ import os
 import math
 import time
 import pygame
-from source.board import ParticleColor
+from source.board import ParticleColor, Board
 from source.gpu_process import GPUSimulation
 from source.cpu_process import SingleCPUSimulation
 
@@ -36,10 +36,19 @@ class App:
         self.grid_width: int = 160
         self.grid_height: int = 90
 
-        # board_mode of execution
-        # 0 - Single core CPU
-        # 1 - Compute GPU
-        self.board_mode: int = 0
+        # board mode of execution
+        self.board_mode: int = 1
+
+        # particle board
+        self.board: Board | None = None
+
+        # update board mode
+        self.update_board_mode()
+
+    def update_board_mode(self):
+        """
+        Updates board mode
+        """
 
         # pick board
         # CPU
@@ -88,9 +97,21 @@ class App:
             if event.type == pygame.QUIT:
                 self.running = False
 
-            # if button ESC was pressed -> exit
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                self.running = False
+            # if keyboard was pressed
+            elif event.type == pygame.KEYDOWN:
+                # if ESC key was pressed -> exit
+                if event.key == pygame.K_ESCAPE:
+                    self.running = False
+
+                # if number 1 was pressed -> switch mode to 0
+                elif event.key == pygame.K_1:
+                    self.board_mode = 0
+                    self.update_board_mode()
+
+                # if number 2 was pressed -> switch mode to 1
+                elif event.key == pygame.K_2:
+                    self.board_mode = 1
+                    self.update_board_mode()
 
     def process_render(self):
         """
