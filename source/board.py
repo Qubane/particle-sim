@@ -25,7 +25,7 @@ class Board:
         self.width: int = width
         self.height: int = height
 
-        self.board: np.ndarray = np.zeros(self.width * self.height, dtype=np.uint8)
+        self.board: np.ndarray = np.zeros(self.width * self.height, dtype=np.uint32)
 
     def plot(self, x_pos: int | float, y_pos: int | float, value: int):
         """
