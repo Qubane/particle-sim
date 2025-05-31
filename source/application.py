@@ -7,7 +7,7 @@ import math
 import time
 import pygame
 from source.board import ParticleColor
-from source.gpu_process import *
+from source.gpu_process import GPUSimulation
 from source.cpu_process import SingleCPUSimulation
 
 
@@ -42,12 +42,15 @@ class App:
         self.grid_height: int = 90
 
         # pick board
+        # CPU
         if self.board_mode == 0:
             self.board: SingleCPUSimulation = SingleCPUSimulation(self.grid_width, self.grid_height)
 
+        # GPU
         elif self.board_mode == 1:
-            ...
+            self.board: GPUSimulation = GPUSimulation(self.grid_width, self.grid_height)
 
+        # error
         else:
             raise NotImplementedError
 
@@ -79,7 +82,9 @@ class App:
         Processes window events
         """
 
+        # go through events
         for event in pygame.event.get():
+            # if window exit was pressed
             if event.type == pygame.QUIT:
                 self.running = False
 
