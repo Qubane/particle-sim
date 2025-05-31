@@ -36,6 +36,10 @@ class GPUSimulation(Board):
         particle_grid.bind_to_storage_buffer(0)
         processed_grid.bind_to_storage_buffer(1)
 
+        # put uniforms
+        self._compute["u_Width"] = self.width
+        self._compute["u_Height"] = self.height
+
         # calculate work group
         work_group_size = (16, 16, 1)
         num_groups_x = (self.width + work_group_size[0] - 1) // work_group_size[0]
@@ -46,4 +50,4 @@ class GPUSimulation(Board):
         self._compute.run(group_x=num_groups_x, group_y=num_groups_y, group_z=num_groups_z)
 
         # write buffer data to board
-        self.board = np.frombuffer(bytearray(processed_grid.read()), dtype=self.board.dtype)
+        self.board = np.copy(np.frombuffer(processed_grid.read(), dtype=self.board.dtype))
