@@ -27,3 +27,23 @@ class GPUSimulation(Board):
         """
         Makes a step in simulation
         """
+
+        # create buffers
+        particle_grid = self.ctx.buffer(data=self.board.tobytes())
+        processed_grid = self.ctx.buffer(reserve=self.board.nbytes)
+
+        # bind storage buffers
+        particle_grid.bind_to_storage_buffer(0)
+        processed_grid.bind_to_storage_buffer(1)
+
+        # calculate work group
+        work_group_size = (16, 16, 1)
+        num_groups_x = (self.width + work_group_size[0] - 1) // work_group_size[0]
+        num_groups_y = (self.height + work_group_size[1] - 1) // work_group_size[1]
+        num_groups_z = work_group_size[2]
+
+        # dispatch the shader
+        self._compute.run(group_x=num_groups_x, group_y=num_groups_y, group_z=num_groups_z)
+
+        # write buffer data to board
+        self.board = np.frombuffer(bytearray(processed_grid.read()), dtype=self.board.dtype)
