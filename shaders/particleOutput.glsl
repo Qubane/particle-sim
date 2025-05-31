@@ -3,6 +3,10 @@
 uniform uint u_Width;
 uniform uint u_Height;
 
+uniform uint u_ParticleGridWidth;
+uniform uint u_ParticleWidth;
+uniform uint u_ParticleHeight;
+
 // output image
 layout(rgba8ui, binding = 0) uniform writeonly uimage2D outputImage;
 
@@ -20,11 +24,17 @@ void main() {
     if (pos.x >= u_Width || pos.y >= u_Height)
         return;
 
+    // calculate grid position
+    ivec2 gridPos = ivec2(
+        pos.x / u_ParticleWidth,
+        (u_Height - pos.y - 1) / u_ParticleHeight);
+
     // else pick color
     vec4 color;
-    switch(particleGrid[pos.y * u_Width + pos.x]) {
+    switch(particleGrid[gridPos.y * u_ParticleGridWidth + gridPos.x]) {
         case 0:  // empty
-            return;
+            color = vec4(0.0);
+            break;
         case 1:  // sand particle
             color = vec4(1.0, 1.0, 0.0, 1.0);
             break;

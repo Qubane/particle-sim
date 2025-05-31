@@ -2,10 +2,11 @@
 Application class
 """
 
-import os
 import math
 import time
 import pygame
+import numpy as np
+import moderngl as mgl
 from source.board import ParticleColor, Board
 from source.gpu_process import GPUSimulation
 from source.cpu_process import SingleCPUSimulation
@@ -28,13 +29,26 @@ class App:
         # pygame window caption
         pygame.display.set_caption("Particles")
 
+        # moderngl
+        self.ctx: mgl.Context = mgl.create_standalone_context()
+
+        # moderngl shader
+        with open("shaders/particleOutput.glsl", "r", encoding="utf-8") as file:
+            self._particle_output: mgl.ComputeShader = self.ctx.compute_shader(file.read())
+
+        # moderngl render
+        self.texture: mgl.Texture = self.ctx.texture(
+            size=(self.window_width, self.window_height),
+            components=1,
+            dtype="u4")
+
         # application loop
         self.running: bool = False
-        self.framerate: int = 25
+        self.framerate: int = 60
 
         # grid_width and grid_height
-        self.grid_width: int = 160
-        self.grid_height: int = 90
+        self.grid_width: int = self.window_width
+        self.grid_height: int = self.window_height
 
         # board mode of execution
         self.board_mode: int = 1
@@ -128,28 +142,33 @@ class App:
         Processes window rendering
         """
 
-        # clear display
-        self.window.fill(0)
+        # bind image buffer
+        self.texture.bind_to_image(0)
 
-        # calculate size of particles
-        particle_size_x = math.ceil(self.window_width / self.grid_width)
-        particle_size_y = math.ceil(self.window_height / self.grid_height)
+        # create buffers
+        particle_grid = self.ctx.buffer(data=self.board.board.tobytes())
 
-        # render particle board to window
-        for y in range(self.grid_height):
-            for x in range(self.grid_width):
-                # if particle is empty -> skip
-                if self.board.board[(self.grid_height - y - 1) * self.grid_width + x] < 1:
-                    continue
+        # bind storage buffers
+        particle_grid.bind_to_storage_buffer(1)
 
-                # calculate rectangle
-                rect = (
-                    x * particle_size_x, y * particle_size_y,  # position
-                    particle_size_x,     particle_size_y       # size
-                )
+        # put uniforms
+        self._particle_output["u_Width"] = self.window_width
+        self._particle_output["u_Height"] = self.window_height
+        self._particle_output["u_ParticleGridWidth"] = self.grid_width
+        self._particle_output["u_ParticleWidth"] = math.ceil(self.window_width / self.grid_width)
+        self._particle_output["u_ParticleHeight"] = math.ceil(self.window_height / self.grid_height)
 
-                # draw rectangle
-                pygame.draw.rect(self.window, ParticleColor.SAND, rect)
+        # calculate work group
+        work_group_size = (16, 16, 1)
+        num_groups_x = (self.window_width + work_group_size[0] - 1) // work_group_size[0]
+        num_groups_y = (self.window_height + work_group_size[1] - 1) // work_group_size[1]
+        num_groups_z = work_group_size[2]
+
+        # dispatch the shader
+        self._particle_output.run(group_x=num_groups_x, group_y=num_groups_y, group_z=num_groups_z)
+
+        # blit the texture
+        self.texture.read_into(self.window.get_buffer())
 
         # update image
         pygame.display.flip()
