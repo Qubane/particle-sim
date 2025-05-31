@@ -59,6 +59,9 @@ class App:
         # update board mode
         self.update_board_mode()
 
+        # moderngl storage buffer
+        self.particle_grid: mgl.Buffer = self.ctx.buffer(reserve=self.board.board.nbytes)
+
     def update_board_mode(self):
         """
         Updates board mode
@@ -145,11 +148,11 @@ class App:
         # bind image buffer
         self.texture.bind_to_image(0)
 
-        # create buffers
-        particle_grid = self.ctx.buffer(data=self.board.board.tobytes())
+        # write data to buffer
+        self.particle_grid.write(self.board.board.tobytes())
 
-        # bind storage buffers
-        particle_grid.bind_to_storage_buffer(1)
+        # bind the storage buffer
+        self.particle_grid.bind_to_storage_buffer(1)
 
         # put uniforms
         self._particle_output["u_Width"] = self.window_width
