@@ -50,6 +50,12 @@ class App:
         Updates board mode
         """
 
+        # check if particle board already exists
+        particles = None
+        if self.board is not None:
+            # save the array of particles
+            particles = self.board.board
+
         # pick board
         # CPU
         if self.board_mode == 0:
@@ -62,6 +68,10 @@ class App:
         # error
         else:
             raise NotImplementedError
+
+        # put the particles back
+        if particles is not None:
+            self.board.board = particles
 
     def run(self):
         """
