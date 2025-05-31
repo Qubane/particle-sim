@@ -17,7 +17,7 @@ class GPUSimulation(Board):
         super().__init__(*args, **kwargs)
 
         # create context
-        self.ctx = mgl.create_context(standalone=True)
+        self.ctx = mgl.get_context()
 
         # load shader
         with open("shaders/particleCompute.glsl", "r", encoding="utf-8") as file:
