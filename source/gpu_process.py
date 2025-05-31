@@ -30,7 +30,7 @@ class GPUSimulation(Board):
 
         # create buffers
         particle_grid = self.ctx.buffer(data=self.board.tobytes())
-        processed_grid = self.ctx.buffer(reserve=self.board.nbytes)
+        processed_grid = self.ctx.buffer(reserve=particle_grid.size)
 
         # bind storage buffers
         particle_grid.bind_to_storage_buffer(0)
