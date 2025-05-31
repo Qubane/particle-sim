@@ -84,8 +84,12 @@ class App:
 
         # go through events
         for event in pygame.event.get():
-            # if window exit was pressed
+            # if window exit was pressed -> exit
             if event.type == pygame.QUIT:
+                self.running = False
+
+            # if button ESC was pressed -> exit
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.running = False
 
     def process_render(self):
