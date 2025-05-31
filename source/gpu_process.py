@@ -20,7 +20,7 @@ class GPUSimulation(Board):
         self.ctx = mgl.create_context(standalone=True)
 
         # load shader
-        with open("shaders/compute.glsl", "r", encoding="utf-8") as file:
+        with open("shaders/particleCompute.glsl", "r", encoding="utf-8") as file:
             self._compute: mgl.ComputeShader = self.ctx.compute_shader(file.read())
 
     def simulation_step(self):
