@@ -30,16 +30,17 @@ void main() {
         (u_Height - pos.y - 1) / u_ParticleHeight);
 
     // else pick color
-    vec4 color;
+    // the order is BGRA
+    uvec4 color;
     switch(particleGrid[gridPos.y * u_ParticleGridWidth + gridPos.x]) {
         case 0:  // empty
-            color = vec4(0.0);
+            color = uvec4(0);
             break;
         case 1:  // sand particle
-            color = vec4(1.0, 1.0, 0.0, 1.0);
+            color = uvec4(0, 255, 255, 0);
             break;
     }
 
     // store color
-    imageStore(outputImage, pos, uvec4(color * 255));
+    imageStore(outputImage, pos, color);
 }

@@ -22,8 +22,8 @@ class App:
         pygame.init()
 
         # pygame window
-        self.window_width: int = 1280
-        self.window_height: int = 720
+        self.window_width: int = 1600
+        self.window_height: int = 900
         self.window = pygame.display.set_mode((self.window_width, self.window_height))
 
         # pygame window caption
@@ -39,8 +39,8 @@ class App:
         # moderngl render
         self.texture: mgl.Texture = self.ctx.texture(
             size=(self.window_width, self.window_height),
-            components=1,
-            dtype="u4")
+            components=4,
+            dtype="u1")
 
         # application loop
         self.running: bool = False
@@ -183,7 +183,7 @@ class App:
 
         # sinusoidal movement for brush
         x = (math.sin(time.perf_counter() / 2) + 1) / 2 * self.grid_width
-        self.board.brush(x, self.grid_height * 0.8, 1, 3.0)
+        self.board.brush(x, self.grid_height * 0.8, 1, 5.0)
 
         # make a simulation step
         self.board.simulation_step()
