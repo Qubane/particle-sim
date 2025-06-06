@@ -3,7 +3,6 @@
 uniform uint u_Width;
 uniform uint u_Height;
 
-uniform uint u_ParticleGridWidth;
 uniform uint u_ParticleWidth;
 uniform uint u_ParticleHeight;
 
@@ -11,9 +10,7 @@ uniform uint u_ParticleHeight;
 layout(rgba8ui, binding = 0) uniform writeonly uimage2D outputImage;
 
 // particle board
-layout(std430, binding = 1) buffer ParticleGrid {
-    uint particleGrid[];
-};
+layout(r8ui, binding = 1) uniform readonly uimage2D particleGrid;
 
 layout(local_size_x = 16, local_size_y = 16) in;
 void main() {
@@ -32,7 +29,7 @@ void main() {
     // else pick color
     // the order is BGRA
     uvec4 color;
-    switch(particleGrid[gridPos.y * u_ParticleGridWidth + gridPos.x]) {
+    switch(imageLoad(particleGrid, gridPos).r) {
         case 0:  // empty
             color = uvec4(0);
             break;

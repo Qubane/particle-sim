@@ -3,26 +3,24 @@
 uniform uint u_Width;
 uniform uint u_Height;
 
-layout(std430, binding = 1) buffer ParticleGrid {
-    uint particleGrid[];
-};
+// imput / unprocessed grid
+layout(r8ui, binding = 1) uniform readonly uimage2D particleGrid;
 
-layout(std430, binding = 2) buffer ProcessedGrid {
-    uint processedGrid[];
-};
+// output grid
+layout(r8ui, binding = 2) uniform writeonly uimage2D processedGrid;
 
 uint get_unbound(int x, int y) {
-    return particleGrid[y * u_Width + x];
+    return imageLoad(particleGrid, ivec2(x, y)).r;
 }
 
 uint get_bound(int x, int y) {
     if (x > -1 && x < u_Width && y > -1 && y < u_Height)
-        return particleGrid[y * u_Width + x];
+        return imageLoad(particleGrid, ivec2(x, y)).r;
     return 1u;
 }
 
 void put_unbound(int x, int y, uint val) {
-    processedGrid[y * u_Width + x] = val;
+    imageStore(processedGrid, ivec2(x, y), uvec4(val));
 }
 
 layout(local_size_x = 16, local_size_y = 16) in;
@@ -35,7 +33,7 @@ void main() {
         return;
 
     // get current particle
-    uint particle = particleGrid[pos.y * u_Width + pos.x];
+    uint particle = get_unbound(pos.x, pos.y);
 
     // if it's empty -> return
     if (particle == 0)

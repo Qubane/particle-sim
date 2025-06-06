@@ -20,12 +20,18 @@ class GPUSimulation(Board):
         self.ctx = mgl.get_context()
 
         # create buffers
-        self.particle_grid: mgl.Buffer = self.ctx.buffer(reserve=self.board.nbytes)
-        self.processed_grid: mgl.Buffer = self.ctx.buffer(reserve=self.particle_grid.size)
+        self.particle_grid: mgl.Texture = self.ctx.texture(
+            size=(self.width, self.height),
+            components=1,
+            dtype="u1")
+        self.processed_grid: mgl.Texture = self.ctx.texture(
+            size=(self.width, self.height),
+            components=1,
+            dtype="u1")
 
         # bind storage buffers
-        self.particle_grid.bind_to_storage_buffer(1)
-        self.processed_grid.bind_to_storage_buffer(2)
+        self.particle_grid.bind_to_image(1)
+        self.processed_grid.bind_to_image(2)
 
         # load shader
         with open("shaders/particleCompute.glsl", "r", encoding="utf-8") as file:
@@ -40,7 +46,7 @@ class GPUSimulation(Board):
         self.particle_grid.write(self.board.tobytes())
 
         # clear processed buffer
-        self.processed_grid.clear()
+        self.processed_grid.write(b'\x00' * self.board.nbytes)
 
         # put uniforms
         self._compute["u_Width"] = self.width

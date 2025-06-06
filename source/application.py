@@ -43,7 +43,7 @@ class App:
             dtype="u1")
 
         # moderngl storage buffer
-        self.ssbo_particle_grid: mgl.Buffer | None = None
+        self.particle_grid: mgl.Texture | None = None
 
         # application loop
         self.running: bool = False
@@ -79,12 +79,15 @@ class App:
             self.board: SingleCPUSimulation = SingleCPUSimulation(self.grid_width, self.grid_height)
 
             # if particle grid does not exist
-            if self.ssbo_particle_grid is None:
+            if self.particle_grid is None:
                 # create buffer
-                self.ssbo_particle_grid = self.ctx.buffer(reserve=self.board.board.nbytes)
+                self.particle_grid = self.ctx.texture(
+                    size=(self.board.width, self.board.height),
+                    components=1,
+                    dtype="u1")
 
                 # bind the storage buffer
-                self.ssbo_particle_grid.bind_to_storage_buffer(1)
+                self.particle_grid.bind_to_image(1)
 
         # GPU
         elif self.process_mode == 1:
@@ -160,12 +163,11 @@ class App:
         # check if CPU render
         if self.process_mode == 0:
             # write data to buffer
-            self.ssbo_particle_grid.write(self.board.board.tobytes())
+            self.particle_grid.write(self.board.board.tobytes())
 
         # put uniforms
         self._particle_output["u_Width"] = self.window_width
         self._particle_output["u_Height"] = self.window_height
-        self._particle_output["u_ParticleGridWidth"] = self.grid_width
         self._particle_output["u_ParticleWidth"] = math.ceil(self.window_width / self.grid_width)
         self._particle_output["u_ParticleHeight"] = math.ceil(self.window_height / self.grid_height)
 
