@@ -30,7 +30,7 @@ class App:
         pygame.display.set_caption("Particles")
 
         # moderngl
-        self.ctx: mgl.Context = mgl.create_standalone_context()
+        self.ctx: mgl.Context = mgl.create_context(require=430, standalone=True)
 
         # moderngl shader
         with open("shaders/particleOutput.glsl", "r", encoding="utf-8") as file:
@@ -42,6 +42,9 @@ class App:
             components=4,
             dtype="u1")
 
+        # moderngl storage buffer
+        self.ssbo_particle_grid: mgl.Buffer | None = None
+
         # application loop
         self.running: bool = False
         self.framerate: int = 60
@@ -51,16 +54,13 @@ class App:
         self.grid_height: int = self.window_height
 
         # board mode of execution
-        self.board_mode: int = 1
+        self.process_mode: int = 1
 
         # particle board
         self.board: Board | None = None
 
         # update board mode
         self.update_board_mode()
-
-        # moderngl storage buffer
-        self.particle_grid: mgl.Buffer = self.ctx.buffer(reserve=self.board.board.nbytes)
 
     def update_board_mode(self):
         """
@@ -75,12 +75,21 @@ class App:
 
         # pick board
         # CPU
-        if self.board_mode == 0:
+        if self.process_mode == 0:
             self.board: SingleCPUSimulation = SingleCPUSimulation(self.grid_width, self.grid_height)
 
+            # if particle grid does not exist
+            if self.ssbo_particle_grid is None:
+                # create buffer
+                self.ssbo_particle_grid = self.ctx.buffer(reserve=self.board.board.nbytes)
+
+                # bind the storage buffer
+                self.ssbo_particle_grid.bind_to_storage_buffer(1)
+
         # GPU
-        elif self.board_mode == 1:
+        elif self.process_mode == 1:
             self.board: GPUSimulation = GPUSimulation(self.grid_width, self.grid_height)
+            # no need to create a buffer here, it could be reused instead
 
         # error
         else:
@@ -132,12 +141,12 @@ class App:
 
                 # if number 1 was pressed -> switch mode to 0
                 elif event.key == pygame.K_1:
-                    self.board_mode = 0
+                    self.process_mode = 0
                     self.update_board_mode()
 
                 # if number 2 was pressed -> switch mode to 1
                 elif event.key == pygame.K_2:
-                    self.board_mode = 1
+                    self.process_mode = 1
                     self.update_board_mode()
 
     def process_render(self):
@@ -148,11 +157,10 @@ class App:
         # bind image buffer
         self.texture.bind_to_image(0)
 
-        # write data to buffer
-        self.particle_grid.write(self.board.board.tobytes())
-
-        # bind the storage buffer
-        self.particle_grid.bind_to_storage_buffer(1)
+        # check if CPU render
+        if self.process_mode == 0:
+            # write data to buffer
+            self.ssbo_particle_grid.write(self.board.board.tobytes())
 
         # put uniforms
         self._particle_output["u_Width"] = self.window_width

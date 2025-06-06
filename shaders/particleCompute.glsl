@@ -3,11 +3,11 @@
 uniform uint u_Width;
 uniform uint u_Height;
 
-layout(std430, binding = 0) buffer ParticleGrid {
+layout(std430, binding = 1) buffer ParticleGrid {
     uint particleGrid[];
 };
 
-layout(std430, binding = 1) buffer ProcessedGrid {
+layout(std430, binding = 2) buffer ProcessedGrid {
     uint processedGrid[];
 };
 
