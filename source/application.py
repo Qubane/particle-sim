@@ -112,7 +112,10 @@ class App:
 
         # application loop
         clk = pygame.time.Clock()
+        running_avg = [0 for _ in range(128)]
+        count = 0
         while self.running:
+            start = time.perf_counter()
             # render image
             self.process_render()
 
@@ -123,7 +126,14 @@ class App:
             self.process_logic()
 
             # wait till next frame
-            clk.tick(self.framerate)
+            # clk.tick(self.framerate)
+            end = time.perf_counter()
+
+            running_avg[count] = 1 / (end - start)
+            count = (count + 1) % len(running_avg)
+
+            if count == 0:
+                print(sum(running_avg) / len(running_avg))
 
     def process_events(self):
         """
