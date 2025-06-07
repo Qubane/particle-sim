@@ -42,6 +42,10 @@ class App:
             components=4,
             dtype="u1")
 
+        # moderngl color palette
+        self.color_palette: mgl.Buffer = self.ctx.buffer(data=ParticleColor.GPU_BUF.data)
+        self.color_palette.bind_to_storage_buffer(3)
+
         # moderngl storage buffer
         self.particle_grid: mgl.Texture | None = None
 

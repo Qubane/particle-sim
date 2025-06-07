@@ -12,8 +12,22 @@ class ParticleColor:
     Colors for particles
     """
 
-    SAND = (255, 255, 0)
-    WATER = (0, 32, 255)
+    EMPTY = (0, 0, 0, 0)
+    SAND = (255, 255, 0, 255)
+    DIRT = (139, 69, 19, 255)
+    WATER = (0, 32, 255, 255)
+
+    ALL: list[tuple[int]] = [
+        EMPTY,
+        SAND,
+        DIRT,
+        WATER
+    ]
+
+    GPU_BUF: np.ndarray = np.array(ALL, dtype=np.uint32)
+    for i in range(len(GPU_BUF)):
+        # RGBA -> BGRA
+        GPU_BUF[i][0], GPU_BUF[i][2] = GPU_BUF[i][2], GPU_BUF[i][0]
 
 
 class Board:
