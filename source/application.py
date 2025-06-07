@@ -110,30 +110,32 @@ class App:
         # set running to True
         self.running = True
 
+        # self.board.brush(self.grid_width // 2, self.grid_height * 0.8, 1, 10.0)
+
         # application loop
-        clk = pygame.time.Clock()
-        running_avg = [0 for _ in range(128)]
+        clock: list[list[float]] = [[0, 0, 0] for _ in range(256)]
         count = 0
         while self.running:
             start = time.perf_counter()
             # render image
             self.process_render()
+            clock[count][0] = time.perf_counter() - start
 
             # process events
             self.process_events()
+            clock[count][1] = time.perf_counter() - start
 
             # process logic
             self.process_logic()
+            clock[count][2] = time.perf_counter() - start
 
-            # wait till next frame
-            # clk.tick(self.framerate)
-            end = time.perf_counter()
-
-            running_avg[count] = 1 / (end - start)
-            count = (count + 1) % len(running_avg)
-
+            count = (count + 1) % len(clock)
             if count == 0:
-                print(sum(running_avg) / len(running_avg))
+                clock_sums = [0 for _ in range(len(clock[-1]))]
+                for timing in clock:
+                    clock_sums = [clock_sums[x] + timing[x] for x in range(len(clock[-1]))]
+                clock_sums = [x / len(clock) * 1000 for x in clock_sums]
+                print(clock_sums, [clock_sums[1] - clock_sums[0], clock_sums[2] - clock_sums[1]], 1000 / clock_sums[-1])
 
     def process_events(self):
         """
@@ -182,13 +184,12 @@ class App:
         self._particle_output["u_ParticleHeight"] = math.ceil(self.window_height / self.grid_height)
 
         # calculate work group
-        work_group_size = (16, 16, 1)
+        work_group_size = (16, 16)
         num_groups_x = (self.window_width + work_group_size[0] - 1) // work_group_size[0]
         num_groups_y = (self.window_height + work_group_size[1] - 1) // work_group_size[1]
-        num_groups_z = work_group_size[2]
 
         # dispatch the shader
-        self._particle_output.run(group_x=num_groups_x, group_y=num_groups_y, group_z=num_groups_z)
+        self._particle_output.run(group_x=num_groups_x, group_y=num_groups_y)
 
         # blit the texture
         self.texture.read_into(self.window.get_buffer())
@@ -203,7 +204,7 @@ class App:
 
         # sinusoidal movement for brush
         x = (math.sin(time.perf_counter() / 2) + 1) / 2 * self.grid_width
-        self.board.brush(x, self.grid_height * 0.8, 1, 5.0)
+        self.board.brush(x, self.grid_height * 0.8, 1, 8.0)
 
         # make a simulation step
         self.board.simulation_step()

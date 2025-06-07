@@ -45,21 +45,17 @@ class GPUSimulation(Board):
         # write data to buffers
         self.particle_grid.write(self.board.tobytes())
 
-        # clear processed buffer
-        self.processed_grid.write(b'\x00' * self.board.nbytes)
-
         # put uniforms
         self._compute["u_Width"] = self.width
         self._compute["u_Height"] = self.height
 
         # calculate work group
-        work_group_size = (16, 16, 1)
+        work_group_size = (16, 16)
         num_groups_x = (self.width + work_group_size[0] - 1) // work_group_size[0]
         num_groups_y = (self.height + work_group_size[1] - 1) // work_group_size[1]
-        num_groups_z = work_group_size[2]
 
         # dispatch the shader
-        self._compute.run(group_x=num_groups_x, group_y=num_groups_y, group_z=num_groups_z)
+        self._compute.run(group_x=num_groups_x, group_y=num_groups_y)
 
         # write buffer data to board
         self.board = np.copy(np.frombuffer(self.processed_grid.read(), dtype=self.board.dtype))
