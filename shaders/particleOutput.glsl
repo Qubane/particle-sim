@@ -36,6 +36,9 @@ void main() {
         case 1:  // sand particle
             color = uvec4(0, 255, 255, 0);
             break;
+        case 2:  // water particle
+            color = uvec4(255, 32, 0, 0);
+            break;
     }
 
     // store color
