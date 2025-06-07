@@ -35,13 +35,18 @@ void main() {
     // get current particle
     uint particle = get_unbound(pos.x, pos.y);
 
+    // place particle
+    put_unbound(pos.x, pos.y, particle);
+
     // if it's empty -> return
-    if (particle == 0)
+    if (particle == 0) {
         return;
+    }
 
     // any particle
     // if particle can go down -> do & exit
     if (get_bound(pos.x, pos.y - 1) == 0) {
+        put_unbound(pos.x, pos.y, 0);
         put_unbound(pos.x, pos.y - 1, particle);
         return;
     }
@@ -56,6 +61,7 @@ void main() {
     if (left_1 == 0 && left_2 == 0) {
         // put down-left if the space is free
         if (get_bound(pos.x - 1, pos.y - 1) == 0) {
+            put_unbound(pos.x, pos.y, 0);
             put_unbound(pos.x - 1, pos.y - 1, particle);
             return;
         }
@@ -65,11 +71,9 @@ void main() {
     else if (right_1 == 0 && right_2 == 0) {
         // put down-left if the space is free
         if (get_bound(pos.x + 1, pos.y - 1) == 0) {
+            put_unbound(pos.x, pos.y, 0);
             put_unbound(pos.x + 1, pos.y - 1, particle);
             return;
         }
     }
-
-    // otherwise just leave
-    put_unbound(pos.x, pos.y, particle);
 }
