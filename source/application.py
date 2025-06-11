@@ -117,7 +117,7 @@ class App:
         # self.board.brush(self.grid_width // 2, self.grid_height * 0.8, 1, 10.0)
 
         # application loop
-        clock: list[list[float]] = [[0, 0, 0] for _ in range(256)]
+        clock: list[list[float]] = [[0, 0, 0] for _ in range(512)]
         count = 0
         while self.running:
             start = time.perf_counter()
@@ -134,7 +134,7 @@ class App:
             clock[count][2] = time.perf_counter() - start
 
             count = (count + 1) % len(clock)
-            if count == 0:
+            if count % 200 == 0:
                 clock_sums = [0 for _ in range(len(clock[-1]))]
                 for timing in clock:
                     clock_sums = [clock_sums[x] + timing[x] for x in range(len(clock[-1]))]
