@@ -35,6 +35,9 @@ void main() {
     // get current particle
     uint particle = get_unbound(pos.x, pos.y);
 
+    bool no_skip_left = pos.x > 0;
+    bool no_skip_right = pos.x + 1 < u_Width;
+
     // if particle is empty or it's touching floor -> return
     if (particle == 0 || pos.y - 1 == 0)
         return;
@@ -47,7 +50,7 @@ void main() {
     }
 
     // check particles to the left
-    else if (get_bound(pos.x - 1, pos.y - 1) == 0 &&
+    else if (no_skip_left && get_bound(pos.x - 1, pos.y - 1) == 0 &&
              get_bound(pos.x - 1, pos.y) == 0 &&
              get_bound(pos.x - 2, pos.y) == 0) {
         put_unbound(pos.x, pos.y, 0);
@@ -55,7 +58,7 @@ void main() {
     }
 
     // check particles to the right
-    else if (get_bound(pos.x + 1, pos.y - 1) == 0 &&
+    else if (no_skip_right && get_bound(pos.x + 1, pos.y - 1) == 0 &&
              get_bound(pos.x + 1, pos.y) == 0 &&
              get_bound(pos.x + 2, pos.y) == 0) {
         put_unbound(pos.x, pos.y, 0);
