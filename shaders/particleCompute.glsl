@@ -35,9 +35,6 @@ void main() {
     // get current particle
     uint particle = get_unbound(pos.x, pos.y);
 
-    // place particle
-    put_unbound(pos.x, pos.y, particle);
-
     // if it's empty -> return
     if (particle == 0) {
         return;
@@ -76,4 +73,7 @@ void main() {
             return;
         }
     }
+
+    // place particle
+    put_unbound(pos.x, pos.y, particle);
 }
