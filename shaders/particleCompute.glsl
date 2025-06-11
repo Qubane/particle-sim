@@ -35,32 +35,29 @@ void main() {
     // get current particle
     uint particle = get_unbound(pos.x, pos.y);
 
-    // if it's empty -> return
-    if (particle == 0) {
+    // if particle is empty or it's touching floor -> return
+    if (particle == 0 || pos.y - 1 == 0)
         return;
-    }
 
     // any particle
     // if particle can go down -> do & exit
-    if (get_bound(pos.x, pos.y - 1) == 0) {
+    else if (get_bound(pos.x, pos.y - 1) == 0) {
         put_unbound(pos.x, pos.y, 0);
         put_unbound(pos.x, pos.y - 1, particle);
     }
 
     // check particles to the left
-    else if (get_bound(pos.x - 1, pos.y) == 0 &&
-        get_bound(pos.x - 2, pos.y) == 0 &&
-        get_bound(pos.x - 1, pos.y - 1) == 0) {
-
+    else if (get_bound(pos.x - 1, pos.y - 1) == 0 &&
+             get_bound(pos.x - 1, pos.y) == 0 &&
+             get_bound(pos.x - 2, pos.y) == 0) {
         put_unbound(pos.x, pos.y, 0);
         put_unbound(pos.x - 1, pos.y - 1, particle);
     }
 
     // check particles to the right
-    else if (get_bound(pos.x + 1, pos.y) == 0 &&
-             get_bound(pos.x + 2, pos.y) == 0 &&
-             get_bound(pos.x + 1, pos.y - 1) == 0) {
-
+    else if (get_bound(pos.x + 1, pos.y - 1) == 0 &&
+             get_bound(pos.x + 1, pos.y) == 0 &&
+             get_bound(pos.x + 2, pos.y) == 0) {
         put_unbound(pos.x, pos.y, 0);
         put_unbound(pos.x + 1, pos.y - 1, particle);
     }
