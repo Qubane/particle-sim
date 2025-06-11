@@ -45,35 +45,28 @@ void main() {
     if (get_bound(pos.x, pos.y - 1) == 0) {
         put_unbound(pos.x, pos.y, 0);
         put_unbound(pos.x, pos.y - 1, particle);
-        return;
     }
 
-    // fetch 4 neighboring particles
-    uint left_1 = get_bound(pos.x - 1, pos.y);
-    uint left_2 = get_bound(pos.x - 2, pos.y);
-    uint right_1 = get_bound(pos.x + 1, pos.y);
-    uint right_2 = get_bound(pos.x + 2, pos.y);
+    // check particles to the left
+    else if (get_bound(pos.x - 1, pos.y) == 0 &&
+        get_bound(pos.x - 2, pos.y) == 0 &&
+        get_bound(pos.x - 1, pos.y - 1) == 0) {
 
-    // if left is empty
-    if (left_1 == 0 && left_2 == 0) {
-        // put down-left if the space is free
-        if (get_bound(pos.x - 1, pos.y - 1) == 0) {
-            put_unbound(pos.x, pos.y, 0);
-            put_unbound(pos.x - 1, pos.y - 1, particle);
-            return;
-        }
+        put_unbound(pos.x, pos.y, 0);
+        put_unbound(pos.x - 1, pos.y - 1, particle);
     }
 
-    // if right is empty
-    else if (right_1 == 0 && right_2 == 0) {
-        // put down-left if the space is free
-        if (get_bound(pos.x + 1, pos.y - 1) == 0) {
-            put_unbound(pos.x, pos.y, 0);
-            put_unbound(pos.x + 1, pos.y - 1, particle);
-            return;
-        }
+    // check particles to the right
+    else if (get_bound(pos.x + 1, pos.y) == 0 &&
+             get_bound(pos.x + 2, pos.y) == 0 &&
+             get_bound(pos.x + 1, pos.y - 1) == 0) {
+
+        put_unbound(pos.x, pos.y, 0);
+        put_unbound(pos.x + 1, pos.y - 1, particle);
     }
 
     // place particle
-    put_unbound(pos.x, pos.y, particle);
+    else {
+        put_unbound(pos.x, pos.y, particle);
+    }
 }
