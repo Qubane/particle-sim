@@ -41,6 +41,7 @@ class App:
             size=(self.window_width, self.window_height),
             components=4,
             dtype="u1")
+        self.texture.bind_to_image(0)
 
         # moderngl color palette
         self.color_palette: mgl.Buffer = self.ctx.buffer(data=ParticleColor.GPU_BUF.data)
@@ -172,9 +173,6 @@ class App:
         """
         Processes window rendering
         """
-
-        # bind image buffer
-        self.texture.bind_to_image(0)
 
         # check if CPU render
         if self.process_mode == 0:
